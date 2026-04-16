@@ -66,12 +66,22 @@ cp target/release/rain /usr/local/bin/
 ## Usage
 
 ```sh
+# basic
 rain                                          # default green, 0/1 falling
-rain -c "0,255,70" -H white -s               # shade enabled
-rain -c cyan -H white -B black -s            # black background, cyan with fade
-rain --chars "ABCDEF0123456789"              # hex character pool
+rain -s                                       # enable tail fade
 rain -S 20,80                                # fast rain
+
+# colors
+rain -c cyan -H white -B black -s            # black bg, cyan with fade
 rain -c red --chars "01" -G "40,0,0"         # red fading to dark brown
+rain -c "0,255,70" -H white -s               # custom RGB, shade enabled
+
+# character sets
+rain --chars "ABCDEF0123456789"              # hex
+rain --chars "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン"  # katakana (Matrix style)
+rain --chars "01アカサタナハマヤラワ" -c green -H white -s   # mixed binary + katakana
+rain --chars "∑∏∫∂√∞≈≠≤≥" -c blue -s        # math symbols
+rain --chars "🔥💀👾🤖💎⚡️" -c yellow          # emoji rain
 ```
 
 Quit: `q`, `ESC` or `Ctrl+C`.
