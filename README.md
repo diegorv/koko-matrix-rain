@@ -145,7 +145,7 @@ The character groups (`-g`) use Unicode ranges sourced from:
 | What | Source | License |
 |---|---|---|
 | Unicode ranges for all groups (katakana, emoji, cards, etc.) | [ezemoji](https://github.com/cowboy8625/ezemoji) crate by cowboy8625 | MIT |
-| "classic" group composition (katakana + digits + symbols) | Inspired by rusty-rain's cmatrix-style group | Apache-2.0 |
+| "classic" group composition (katakana + digits + symbols) | Inspired by [rusty-rain](https://github.com/cowboy8625/rusty-rain)'s cmatrix-style group | Apache-2.0 |
 
 ## License
 
