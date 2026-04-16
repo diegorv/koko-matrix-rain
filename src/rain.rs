@@ -17,6 +17,9 @@ pub struct RainConfig {
     pub shade: bool,
     pub speed: Range<u64>,
     pub chars: Vec<char>,
+    /// Display width of each character (1 for ASCII, 2 for CJK/emoji).
+    /// All characters in the pool are assumed to share the same width.
+    pub char_width: usize,
 }
 
 /// A rendered cell. `None` means empty (no drop here).
@@ -91,11 +94,12 @@ impl Rain {
     pub fn new_seeded(width: usize, height: usize, cfg: RainConfig, seed: u64) -> Self {
         let mut rng = StdRng::seed_from_u64(seed);
         let now = Instant::now();
-        let drops = (0..width)
+        let cols = width / cfg.char_width.max(1);
+        let drops = (0..cols)
             .map(|_| Drop::spawn(&mut rng, height, &cfg.speed, now))
             .collect();
         Self {
-            width,
+            width: cols,
             height,
             cfg,
             drops,
@@ -208,6 +212,7 @@ mod tests {
             shade: true,
             speed: 40..180,
             chars: "01".chars().collect(),
+            char_width: 1,
         }
     }
 
@@ -314,6 +319,68 @@ mod tests {
         c.shade = false;
         let mut rain = Rain::new_seeded(20, 8, c, 7);
         for _ in 0..100 {
+            rain.step_all();
+        }
+        insta::assert_snapshot!(rain.render_ascii());
+    }
+
+    #[test]
+    fn char_width_2_halves_grid_columns() {
+        let mut c = cfg();
+        c.char_width = 2;
+        let rain = Rain::new_seeded(20, 10, c, 42);
+        assert_eq!(rain.width(), 10);
+        assert_eq!(rain.height(), 10);
+    }
+
+    #[test]
+    fn char_width_1_keeps_full_columns() {
+        let rain = Rain::new_seeded(20, 10, cfg(), 42);
+        assert_eq!(rain.width(), 20);
+    }
+
+    #[test]
+    fn wide_chars_grid_shape_is_stable() {
+        let mut c = cfg();
+        c.char_width = 2;
+        c.chars = "アイウエオ".chars().collect();
+        let mut rain = Rain::new_seeded(20, 8, c, 42);
+        for _ in 0..50 {
+            rain.step_all();
+            let g = rain.render();
+            assert_eq!(g.len(), 8);
+            for row in &g {
+                assert_eq!(row.len(), 10);
+            }
+        }
+    }
+
+    #[test]
+    fn wide_chars_only_uses_chars_from_pool() {
+        let pool: Vec<char> = "アイウ".chars().collect();
+        let mut c = cfg();
+        c.char_width = 2;
+        c.chars = pool.clone();
+        let mut rain = Rain::new_seeded(20, 8, c, 42);
+        for _ in 0..30 {
+            rain.step_all();
+        }
+        for row in rain.render() {
+            for cell in row {
+                if let Some(c) = cell {
+                    assert!(pool.contains(&c.ch), "char {:?} not in pool", c.ch);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn snapshot_frame_50_20x8_wide_chars() {
+        let mut c = cfg();
+        c.char_width = 2;
+        c.chars = "アイウエオカキク".chars().collect();
+        let mut rain = Rain::new_seeded(20, 8, c, 42);
+        for _ in 0..50 {
             rain.step_all();
         }
         insta::assert_snapshot!(rain.render_ascii());

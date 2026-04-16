@@ -13,6 +13,7 @@ use std::{
     io::{stdout, BufWriter, Stdout, Write},
     time::{Duration, Instant},
 };
+use unicode_width::UnicodeWidthChar;
 
 /// Loop poll interval. ~30 fps is plenty for a rain effect and keeps CPU quiet.
 const POLL_INTERVAL: Duration = Duration::from_millis(33);
@@ -47,21 +48,23 @@ impl Drop for Term {
     }
 }
 
-fn draw(rain: &Rain, term: &mut Term, bg: Option<Rgb>) -> std::io::Result<()> {
+fn draw(rain: &Rain, term: &mut Term, bg: Option<Rgb>, char_width: usize) -> std::io::Result<()> {
     let out = &mut term.out;
     let grid = rain.render();
+    let blank = " ".repeat(char_width);
     for (y, row) in grid.iter().enumerate() {
         queue!(out, cursor::MoveTo(0, y as u16))?;
         if let Some(bg) = bg {
             queue!(out, SetBackgroundColor(to_color(bg)))?;
         }
-        for cell in row {
+        for (col, cell) in row.iter().enumerate() {
+            queue!(out, cursor::MoveTo((col * char_width) as u16, y as u16))?;
             match cell {
                 Some(c) => {
                     queue!(out, SetForegroundColor(to_color(c.color)), Print(c.ch))?;
                 }
                 None => {
-                    queue!(out, Print(' '))?;
+                    queue!(out, Print(&blank))?;
                 }
             }
         }
@@ -85,13 +88,16 @@ fn is_exit(k: &event::KeyEvent) -> bool {
 
 fn run(cli: Cli) -> std::io::Result<()> {
     let (w, h) = terminal::size()?;
+    let chars: Vec<char> = cli.chars.chars().collect();
+    let char_width = chars.first().and_then(|c| c.width()).unwrap_or(1).max(1);
     let cfg = RainConfig {
         body: cli.color,
         head: cli.head,
         fade_to: cli.fade_to,
         shade: cli.shade,
         speed: cli.speed.clone(),
-        chars: cli.chars.chars().collect(),
+        chars,
+        char_width,
     };
     let mut rain = Rain::new(w as usize, h as usize, cfg.clone());
     let mut term = Term::new()?;
@@ -112,7 +118,7 @@ fn run(cli: Cli) -> std::io::Result<()> {
             }
         }
         if rain.tick(Instant::now()) {
-            draw(&rain, &mut term, cli.bg)?;
+            draw(&rain, &mut term, cli.bg, cfg.char_width)?;
         }
     }
     Ok(())

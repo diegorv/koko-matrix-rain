@@ -78,10 +78,9 @@ rain -c "0,255,70" -H white -s               # custom RGB, shade enabled
 
 # character sets
 rain --chars "ABCDEF0123456789"              # hex
-rain --chars "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン"  # katakana (Matrix style)
-rain --chars "01アカサタナハマヤラワ" -c green -H white -s   # mixed binary + katakana
-rain --chars "∑∏∫∂√∞≈≠≤≥" -c blue -s        # math symbols
-rain --chars "🔥💀👾🤖💎⚡️" -c yellow          # emoji rain
+rain --chars "!@#$%&*+-=~^"                  # symbols
+rain --chars "アイウエオカキクケコサシスセソ" -s  # katakana (Matrix style)
+rain --chars "🔥💀👾🤖💎⚡" -c yellow            # emoji rain
 ```
 
 Quit: `q`, `ESC` or `Ctrl+C`.
