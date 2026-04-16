@@ -67,6 +67,9 @@ koko-rain -g emojis -c yellow -s
 
 ### Character groups (`-g`)
 
+<details>
+<summary>Available groups</summary>
+
 | Group | Description |
 |---|---|
 | `all` | Most groups combined |
@@ -90,6 +93,8 @@ koko-rain -g emojis -c yellow -s
 | `plants` | Plant and fruit emojis |
 | `shapes` | Colored squares and circles |
 | `smile` | Smiley face emojis |
+
+</details>
 
 ### Custom characters (`--chars`)
 
