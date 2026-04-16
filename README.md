@@ -67,20 +67,46 @@ cp target/release/koko-rain /usr/local/bin/
 
 ```sh
 # basic
-koko-rain                                          # default green, 0/1 falling
-koko-rain -s                                       # enable tail fade
-koko-rain -S 20,80                                # fast rain
+koko-rain                        # default green, 0/1 falling
+koko-rain -s                     # enable tail fade
+koko-rain -S 20,80               # fast rain
+koko-rain -S 120,300             # slow, dramatic rain
+```
 
-# colors
-koko-rain -c cyan -H white -B black -s            # black bg, cyan with fade
-koko-rain -c red --chars "01" -G "40,0,0"         # red fading to dark brown
-koko-rain -c "0,255,70" -H white -s               # custom RGB, shade enabled
+### Themes
 
-# character sets
-koko-rain --chars "ABCDEF0123456789"              # hex
-koko-rain --chars "!@#$%&*+-=~^"                  # symbols
-koko-rain --chars "アイウエオカキクケコサシスセソ" -s  # katakana (Matrix style)
-koko-rain --chars "🔥💀👾🤖💎⚡" -c yellow            # emoji rain
+```sh
+# classic matrix — green katakana with fade on black
+koko-rain -c green -H white -B black -s --chars "アイウエオカキクケコサシスセソタチツテト"
+
+# ocean — cyan fading to deep blue
+koko-rain -c cyan -H white -B "0,0,30" -s -G "0,0,80" --chars "~-=≈"
+
+# fire — red/orange fading to dark red
+koko-rain -c "255,100,0" -H "255,255,100" -B black -s -G "80,0,0"
+
+# purple haze — magenta fading to dark purple
+koko-rain -c magenta -H white -B "10,0,20" -s -G "30,0,50"
+
+# gold — amber on black
+koko-rain -c "255,180,0" -H "255,255,150" -B black -s -G "60,30,0"
+
+# arctic — white fading to ice blue
+koko-rain -c white -H white -B "0,5,15" -s -G "0,40,80" --chars ".:*+="
+
+# blood — dark red binary
+koko-rain -c "180,0,0" -H "255,50,50" -B black -s -G "40,0,0"
+```
+
+### Character sets
+
+```sh
+koko-rain --chars "ABCDEF0123456789"               # hex
+koko-rain --chars "!@#$%&*+-=~^"                   # symbols
+koko-rain --chars "01"                              # binary (default)
+koko-rain --chars "アイウエオカキクケコサシスセソ" -s  # katakana
+koko-rain --chars "🔥💀👾🤖💎⚡" -c yellow             # emoji rain
+koko-rain --chars "∑∏∫∂√∞≈≠≤≥" -c cyan -s          # math
 ```
 
 Quit: `q`, `ESC` or `Ctrl+C`.
