@@ -1,7 +1,7 @@
 //! Pure simulation. No I/O, no terminal. Everything here is testable with a seed.
 
 use crate::cli::Rgb;
-use rand::{rngs::StdRng, Rng, SeedableRng};
+use rand::{rngs::StdRng, RngExt, SeedableRng};
 use std::{
     collections::VecDeque,
     ops::Range,
@@ -52,12 +52,12 @@ impl Drop {
         let visible_len = if min_len == max_len {
             min_len
         } else {
-            rng.gen_range(min_len..=max_len)
+            rng.random_range(min_len..=max_len)
         };
 
         // Stagger spawn above the screen so drops enter at different times.
-        let head_y = -(rng.gen_range(0..=height.max(1) as i32));
-        let tick_ms = rng.gen_range(speed.clone());
+        let head_y = -(rng.random_range(0..=height.max(1) as i32));
+        let tick_ms = rng.random_range(speed.clone());
 
         Drop {
             head_y,
@@ -86,7 +86,7 @@ pub struct Rain {
 impl Rain {
     /// Create a Rain with entropy-seeded RNG (production use).
     pub fn new(width: usize, height: usize, cfg: RainConfig) -> Self {
-        let seed: u64 = rand::thread_rng().gen();
+        let seed: u64 = rand::rng().random();
         Self::new_seeded(width, height, cfg, seed)
     }
 
@@ -142,7 +142,7 @@ impl Rain {
     fn step_drop(&mut self, i: usize) {
         let height = self.height;
         let pool_len = self.cfg.chars.len();
-        let ch = self.cfg.chars[self.rng.gen_range(0..pool_len)];
+        let ch = self.cfg.chars[self.rng.random_range(0..pool_len)];
 
         let needs_respawn = {
             let drop = &mut self.drops[i];
