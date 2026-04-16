@@ -78,17 +78,37 @@ Quit: `q`, `ESC` or `Ctrl+C`.
 
 ## Flags
 
-| Flag | Default | Description |
-|---|---|---|
-| `-c, --color` | `green` | Body color (name or `R,G,B`) |
-| `-H, --head` | `white` | Head character color |
-| `-B, --bg` | -- | Background color |
-| `-s, --shade` | off | Enable tail fade |
-| `-G, --fade-to` | `black` | Fade target color |
-| `-S, --speed` | `40,180` | ms between ticks per column (`min,max`) |
-| `--chars` | `01` | Character pool |
+**`-c, --color <COLOR>`**
+Body color of the rain trails. Accepts a named color or `R,G,B` tuple.
+`[default: green]`
 
-Named colors: `black` `white` `red` `green` `blue` `yellow` `cyan` `magenta` `orange` `purple`.
+**`-H, --head <COLOR>`**
+Color of the leading (first) character in each column.
+`[default: white]`
+
+**`-B, --bg <COLOR>`**
+Background color. When omitted the terminal's default background is used.
+
+**`-s, --shade`**
+Enable tail fade. Each cell in the trail gradually blends from the body color toward the fade target.
+
+**`-G, --fade-to <COLOR>`**
+Target color for the tail fade. Only visible when `--shade` is enabled.
+`[default: black]`
+
+**`-S, --speed <MIN,MAX>`**
+Tick interval range in milliseconds. Each column picks a random speed within this range, so lower values produce faster rain.
+`[default: 40,180]`
+
+**`--chars <STRING>`**
+Character pool used to generate the rain. Each tick picks a random character from this string.
+`[default: 01]`
+
+### Named colors
+
+`black` `white` `red` `green` `blue` `yellow` `cyan` `magenta` `orange` `purple`
+
+Any flag that accepts `<COLOR>` also takes an RGB tuple like `"0,255,70"`.
 
 ## Testing
 
