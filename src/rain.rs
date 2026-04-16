@@ -47,7 +47,8 @@ struct Drop {
 impl Drop {
     fn spawn(rng: &mut StdRng, height: usize, speed: &Range<u64>, now: Instant) -> Self {
         // Trail length bounded by screen height, with a sane floor.
-        let max_len = height.saturating_sub(2).max(4);
+        // Cap at height so drops don't waste steps invisible on small terminals.
+        let max_len = height.saturating_sub(2).max(4).min(height.max(1));
         let min_len = 4.min(max_len);
         let visible_len = if min_len == max_len {
             min_len
@@ -92,6 +93,7 @@ impl Rain {
 
     /// Create a Rain with a fixed seed (for tests and reproducibility).
     pub fn new_seeded(width: usize, height: usize, cfg: RainConfig, seed: u64) -> Self {
+        assert!(!cfg.chars.is_empty(), "character pool must not be empty");
         let mut rng = StdRng::seed_from_u64(seed);
         let now = Instant::now();
         let cols = width / cfg.char_width.max(1);

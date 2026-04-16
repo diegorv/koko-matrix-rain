@@ -94,44 +94,53 @@ fn chars_from_ranges(ranges: &[Range<u32>]) -> String {
 
 fn parse_group(s: &str) -> Result<String, String> {
     let chars = match s.to_lowercase().as_str() {
-        "all" => chars_from_ranges(&[
-            // double-width first so char_width detection picks 2
-            129_024..129_036, 129_040..129_096, 129_104..129_113,
-            127_130..127_145, 127_148..127_162, 127_163..127_178, 127_179..127_240,
-            128_336..128_360, 127_024..127_073, 127_074..127_123,
-            129_292..129_401, 129_402..129_483, 129_484..129_536,
-            65_382..65_437, 65_313..65_338,
-            127_761..127_773, 127_757..127_760,
-            9_312..9_332, 127_344..127_369, 127_793..127_827,
-            128_512..128_518, 128_992..129_003,
-            97..123, 65..91, 48..58,
+        "all" | "all-wide" => chars_from_ranges(&[
+            // width-2 groups only (uniform width avoids rendering misalignment)
+            128_336..128_360,                                       // clock
+            129_292..129_339, 129_340..129_350, 129_351..129_401,   // emojis (excl width-1 outliers)
+            129_402..129_483, 129_484..129_536,
+            65_313..65_338,                                         // large-letters
+            127_761..127_773, 127_757..127_760,                     // moon, earth
+            127_793..127_798, 127_799..127_827,                     // plants (excl width-1 🌶)
+            128_512..128_518,                                       // smile
+            128_992..129_003,                                       // shapes
+        ]),
+        "all-narrow" => chars_from_ranges(&[
+            // width-1 groups only
+            129_024..129_036, 129_040..129_096, 129_104..129_113,   // arrows
+            127_130..127_145, 127_148..127_162, 127_163..127_178,   // cards
+            127_179..127_183, 127_184..127_240,                     // cards (excl width-2 🃏)
+            127_024..127_073, 127_074..127_123,                     // dominoes
+            65_382..65_437,                                         // katakana
+            9_312..9_332, 127_344..127_369,                         // numbered-balls, numbered-cubes
+            97..123, 65..91, 48..58,                                // alpha + digits
         ]),
         "alphalow"  => chars_from_ranges(&[97..123]),
         "alphaup"   => chars_from_ranges(&[65..91]),
         "arrow"     => chars_from_ranges(&[129_024..129_036, 129_040..129_096, 129_104..129_113]),
         "bin"       => chars_from_ranges(&[48..50]),
         "braille"   => chars_from_ranges(&[10_241..10_252]),
-        "cards"     => chars_from_ranges(&[127_130..127_145, 127_148..127_162, 127_163..127_178, 127_179..127_240]),
+        "cards"     => chars_from_ranges(&[127_130..127_145, 127_148..127_162, 127_163..127_178, 127_179..127_183, 127_184..127_240]),
         "classic"   => chars_from_ranges(&[65_382..65_437, 48..58, 33..48, 58..64, 124..127]),
         "clock"     => chars_from_ranges(&[128_336..128_360]),
         "crab"      => chars_from_ranges(&[129_408..129_409]),
         "dominosh"  => chars_from_ranges(&[127_024..127_073]),
         "dominosv"  => chars_from_ranges(&[127_074..127_123]),
         "earth"     => chars_from_ranges(&[127_757..127_760]),
-        "emojis"    => chars_from_ranges(&[129_292..129_401, 129_402..129_483, 129_484..129_536]),
+        "emojis"    => chars_from_ranges(&[129_292..129_339, 129_340..129_350, 129_351..129_401, 129_402..129_483, 129_484..129_536]),
         "jap" | "katakana" => chars_from_ranges(&[65_382..65_437]),
         "large-letters"    => chars_from_ranges(&[65_313..65_338]),
         "moon"      => chars_from_ranges(&[127_761..127_773]),
         "num" | "digits"   => chars_from_ranges(&[48..58]),
         "numbered-balls"   => chars_from_ranges(&[9_312..9_332]),
         "numbered-cubes" | "lettered-cubes" => chars_from_ranges(&[127_344..127_369]),
-        "plants"    => chars_from_ranges(&[127_793..127_827]),
+        "plants"    => chars_from_ranges(&[127_793..127_798, 127_799..127_827]),
         "shapes"    => chars_from_ranges(&[128_992..129_003]),
         "smile"     => chars_from_ranges(&[128_512..128_518]),
         _ => {
             return Err(format!(
                 "unknown group: '{s}'\n\
-                 available: all, alphalow, alphaup, arrow, bin, braille, cards, classic, \
+                 available: all, all-narrow, alphalow, alphaup, arrow, bin, braille, cards, classic, \
                  clock, crab, dominosh, dominosv, earth, emojis, jap, large-letters, \
                  lettered-cubes, moon, num, numbered-balls, numbered-cubes, plants, shapes, smile"
             ));
@@ -206,7 +215,8 @@ pub struct Cli {
     #[arg(short = 'g', long, value_parser = parse_group, conflicts_with = "chars",
         long_help = "Use a predefined character group instead of --chars.\n\
             Available groups:\n\
-            \n  all             Most groups combined\
+            \n  all / all-wide  Wide (emoji/symbol) groups combined\
+            \n  all-narrow      Narrow (ASCII/katakana) groups combined\
             \n  alphalow        Lowercase alphabet (a-z)\
             \n  alphaup         Uppercase alphabet (A-Z)\
             \n  arrow           Arrow symbols\
@@ -317,9 +327,10 @@ mod tests {
     #[test]
     fn all_groups_non_empty() {
         for name in [
-            "all", "alphalow", "alphaup", "arrow", "bin", "braille", "cards", "classic",
-            "clock", "crab", "dominosh", "dominosv", "earth", "emojis", "jap", "large-letters",
-            "moon", "num", "numbered-balls", "numbered-cubes", "plants", "shapes", "smile",
+            "all", "all-narrow", "all-wide", "alphalow", "alphaup", "arrow", "bin", "braille",
+            "cards", "classic", "clock", "crab", "dominosh", "dominosv", "earth", "emojis",
+            "jap", "large-letters", "moon", "num", "numbered-balls", "numbered-cubes",
+            "plants", "shapes", "smile",
         ] {
             let chars = parse_group(name).unwrap();
             assert!(!chars.is_empty(), "group '{name}' is empty");
@@ -352,5 +363,6 @@ mod tests {
         assert_eq!(parse_group("jap").unwrap(), parse_group("katakana").unwrap());
         assert_eq!(parse_group("num").unwrap(), parse_group("digits").unwrap());
         assert_eq!(parse_group("numbered-cubes").unwrap(), parse_group("lettered-cubes").unwrap());
+        assert_eq!(parse_group("all").unwrap(), parse_group("all-wide").unwrap());
     }
 }
