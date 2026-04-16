@@ -103,9 +103,11 @@ impl Rain {
         }
     }
 
+    #[cfg(test)]
     pub fn width(&self) -> usize {
         self.width
     }
+    #[cfg(test)]
     pub fn height(&self) -> usize {
         self.height
     }
@@ -126,6 +128,7 @@ impl Rain {
     }
 
     /// Advance every drop exactly one step, ignoring timing. Used by tests.
+    #[cfg(test)]
     pub fn step_all(&mut self) {
         for i in 0..self.drops.len() {
             self.step_drop(i);
@@ -177,6 +180,7 @@ impl Rain {
     }
 
     /// Render as plain ASCII for snapshot testing. '.' = empty.
+    #[cfg(test)]
     pub fn render_ascii(&self) -> String {
         let mut out = String::with_capacity((self.width + 1) * self.height);
         for row in self.render() {
