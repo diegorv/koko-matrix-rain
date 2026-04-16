@@ -3,6 +3,8 @@
 [![CI](https://github.com/diegorv/koko-matrix-rain/actions/workflows/ci.yml/badge.svg)](https://github.com/diegorv/koko-matrix-rain/actions/workflows/ci.yml)
 [![Release](https://github.com/diegorv/koko-matrix-rain/actions/workflows/release.yml/badge.svg)](https://github.com/diegorv/koko-matrix-rain/actions/workflows/release.yml)
 [![crates.io](https://img.shields.io/crates/v/koko-matrix-rain)](https://crates.io/crates/koko-matrix-rain)
+[![dependency status](https://deps.rs/repo/github/diegorv/koko-matrix-rain/status.svg)](https://deps.rs/repo/github/diegorv/koko-matrix-rain)
+[![unsafe forbidden](https://img.shields.io/badge/unsafe-forbidden-success.svg)](https://github.com/rust-secure-code/safety-dance/)
 
 A minimal Matrix-style rain CLI for the terminal. Single binary, zero runtime dependencies, built with Rust.
 
