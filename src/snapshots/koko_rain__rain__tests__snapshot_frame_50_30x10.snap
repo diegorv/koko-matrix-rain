@@ -1,6 +1,5 @@
 ---
 source: src/rain.rs
-assertion_line: 304
 expression: rain.render_ascii()
 ---
 .1.0.........0...0.....1...01.

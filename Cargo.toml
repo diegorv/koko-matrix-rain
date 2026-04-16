@@ -1,5 +1,5 @@
 [package]
-name = "rain"
+name = "koko-rain"
 version = "0.1.0"
 edition = "2021"
 description = "Minimal Matrix-style rain for the terminal (macOS)"

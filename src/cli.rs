@@ -86,7 +86,7 @@ fn parse_chars(s: &str) -> Result<String, String> {
 
 #[derive(Parser, Debug, Clone)]
 #[command(
-    name = "rain",
+    name = "koko-rain",
     about = "Efeito de chuva Matrix minimalista para o terminal",
     version
 )]

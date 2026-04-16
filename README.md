@@ -1,4 +1,4 @@
-# rain
+# koko-rain
 
 Matrix-style rain effect for the terminal. Single binary, zero runtime dependencies, built with Rust.
 
@@ -26,7 +26,7 @@ Release build (optimized binary with LTO and stripped symbols):
 cargo build --release
 ```
 
-The binary will be at `target/release/rain`.
+The binary will be at `target/release/koko-rain`.
 
 ## Install
 
@@ -36,7 +36,7 @@ The binary will be at `target/release/rain`.
 cargo install --path .
 ```
 
-This compiles in release mode and copies the binary to `~/.cargo/bin/rain`.
+This compiles in release mode and copies the binary to `~/.cargo/bin/koko-rain`.
 
 ### Add to zsh PATH
 
@@ -50,8 +50,8 @@ source ~/.zshrc
 Verify:
 
 ```sh
-which rain    # should print ~/.cargo/bin/rain
-rain --version
+which koko-rain    # should print ~/.cargo/bin/koko-rain
+koko-rain --version
 ```
 
 ### Manual install
@@ -60,27 +60,27 @@ If you prefer placing the binary elsewhere:
 
 ```sh
 cargo build --release
-cp target/release/rain /usr/local/bin/
+cp target/release/koko-rain /usr/local/bin/
 ```
 
 ## Usage
 
 ```sh
 # basic
-rain                                          # default green, 0/1 falling
-rain -s                                       # enable tail fade
-rain -S 20,80                                # fast rain
+koko-rain                                          # default green, 0/1 falling
+koko-rain -s                                       # enable tail fade
+koko-rain -S 20,80                                # fast rain
 
 # colors
-rain -c cyan -H white -B black -s            # black bg, cyan with fade
-rain -c red --chars "01" -G "40,0,0"         # red fading to dark brown
-rain -c "0,255,70" -H white -s               # custom RGB, shade enabled
+koko-rain -c cyan -H white -B black -s            # black bg, cyan with fade
+koko-rain -c red --chars "01" -G "40,0,0"         # red fading to dark brown
+koko-rain -c "0,255,70" -H white -s               # custom RGB, shade enabled
 
 # character sets
-rain --chars "ABCDEF0123456789"              # hex
-rain --chars "!@#$%&*+-=~^"                  # symbols
-rain --chars "アイウエオカキクケコサシスセソ" -s  # katakana (Matrix style)
-rain --chars "🔥💀👾🤖💎⚡" -c yellow            # emoji rain
+koko-rain --chars "ABCDEF0123456789"              # hex
+koko-rain --chars "!@#$%&*+-=~^"                  # symbols
+koko-rain --chars "アイウエオカキクケコサシスセソ" -s  # katakana (Matrix style)
+koko-rain --chars "🔥💀👾🤖💎⚡" -c yellow            # emoji rain
 ```
 
 Quit: `q`, `ESC` or `Ctrl+C`.
@@ -136,11 +136,11 @@ cargo build --release
 
 The release profile is already configured with LTO, strip, and codegen-units=1 -- the binary comes out small with no debug symbols.
 
-To distribute, just send the `target/release/rain` file. The recipient can place it anywhere on their PATH:
+To distribute, just send the `target/release/koko-rain` file. The recipient can place it anywhere on their PATH:
 
 ```sh
-chmod +x rain
-mv rain /usr/local/bin/
+chmod +x koko-rain
+mv koko-rain /usr/local/bin/
 ```
 
 ### Cross-compilation (Apple Silicon + Intel)
@@ -152,9 +152,9 @@ rustup target add x86_64-apple-darwin
 cargo build --release --target aarch64-apple-darwin
 cargo build --release --target x86_64-apple-darwin
 lipo -create \
-  target/aarch64-apple-darwin/release/rain \
-  target/x86_64-apple-darwin/release/rain \
-  -output rain
+  target/aarch64-apple-darwin/release/koko-rain \
+  target/x86_64-apple-darwin/release/koko-rain \
+  -output koko-rain
 ```
 
 ## Project structure
