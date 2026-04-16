@@ -142,8 +142,8 @@ fn parse_group(s: &str) -> Result<String, String> {
 
 #[derive(Parser, Debug, Clone)]
 #[command(
-    name = "koko-rain",
-    about = "Minimal Matrix-style rain for the terminal",
+    name = "koko-matrix-rain",
+    about = "Minimal Matrix-style rain CLI for the terminal",
     version
 )]
 pub struct Cli {

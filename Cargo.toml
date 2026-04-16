@@ -1,8 +1,8 @@
 [package]
-name = "koko-rain"
+name = "koko-matrix-rain"
 version = "0.1.0"
 edition = "2021"
-description = "Minimal Matrix-style rain for the terminal (macOS)"
+description = "Minimal Matrix-style rain CLI for the terminal"
 license = "MIT"
 
 [dependencies]
