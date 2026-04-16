@@ -87,7 +87,7 @@ fn is_exit(k: &event::KeyEvent) -> bool {
 
 fn run(cli: Cli) -> std::io::Result<()> {
     let (w, h) = terminal::size()?;
-    let chars: Vec<char> = cli.chars.chars().collect();
+    let chars: Vec<char> = cli.group.unwrap_or(cli.chars).chars().collect();
     let char_width = chars.first().and_then(|c| c.width()).unwrap_or(1).max(1);
     let cfg = RainConfig {
         body: cli.color,

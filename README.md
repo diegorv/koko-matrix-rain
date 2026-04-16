@@ -77,7 +77,7 @@ koko-rain -S 120,300             # slow, dramatic rain
 
 ```sh
 # classic matrix — green katakana with fade on black
-koko-rain -c green -H white -B black -s --chars "アイウエオカキクケコサシスセソタチツテト"
+koko-rain -g jap -c green -H white -B black -s
 
 # ocean — cyan fading to deep blue
 koko-rain -c cyan -H white -B "0,0,30" -s -G "0,0,80" --chars "~-=≈"
@@ -96,54 +96,158 @@ koko-rain -c white -H white -B "0,5,15" -s -G "0,40,80" --chars ".:*+="
 
 # blood — dark red binary
 koko-rain -c "180,0,0" -H "255,50,50" -B black -s -G "40,0,0"
+
+# cmatrix style
+koko-rain -g classic -c green -H white -B black -s
+
+# moon phases on dark sky
+koko-rain -g moon -c "200,200,255" -B "0,5,15" -s
+
+# playing cards
+koko-rain -g cards -c cyan -s
+
+# emoji chaos
+koko-rain -g emojis -c yellow -s
 ```
 
-### Character sets
+### Character groups (`-g, --group`)
+
+Use `-g` to pick a predefined character set instead of `--chars`:
+
+```sh
+koko-rain -g jap -s          # half-width katakana
+koko-rain -g emojis          # random emojis
+koko-rain -g cards -c cyan   # playing cards
+```
+
+| Group | Description |
+|---|---|
+| `all` | Most groups combined |
+| `alphalow` | Lowercase alphabet (a-z) |
+| `alphaup` | Uppercase alphabet (A-Z) |
+| `arrow` | Arrow symbols |
+| `bin` | Binary digits (0, 1) |
+| `braille` | Braille dot patterns |
+| `cards` | Playing card suits |
+| `classic` | Katakana + digits + symbols (cmatrix style) |
+| `clock` | Clock face emojis |
+| `crab` | 🦀 |
+| `dominosh` | Horizontal domino tiles |
+| `dominosv` | Vertical domino tiles |
+| `earth` | 🌍🌎🌏 |
+| `emojis` | Broad emoji set |
+| `jap` / `katakana` | Half-width Japanese katakana |
+| `large-letters` | Full-width Latin (Ａ-Ｚ) |
+| `moon` | Moon phase emojis |
+| `num` / `digits` | Digits (0-9) |
+| `numbered-balls` | Circled numbers (①-⑳) |
+| `numbered-cubes` / `lettered-cubes` | Squared letters (🅰-🆈) |
+| `plants` | Plant and fruit emojis |
+| `shapes` | Colored squares and circles |
+| `smile` | Smiley face emojis |
+
+### Custom characters (`--chars`)
 
 ```sh
 koko-rain --chars "ABCDEF0123456789"               # hex
 koko-rain --chars "!@#$%&*+-=~^"                   # symbols
-koko-rain --chars "01"                              # binary (default)
-koko-rain --chars "アイウエオカキクケコサシスセソ" -s  # katakana
-koko-rain --chars "🔥💀👾🤖💎⚡" -c yellow             # emoji rain
 koko-rain --chars "∑∏∫∂√∞≈≠≤≥" -c cyan -s          # math
+koko-rain --chars "🔥💀👾🤖💎⚡" -c yellow             # emoji rain
 ```
 
 Quit: `q`, `ESC` or `Ctrl+C`.
 
-## Flags
+## Customization
 
-**`-c, --color <COLOR>`**
-Body color of the rain trails. Accepts a named color or `R,G,B` tuple.
-`[default: green]`
+<details>
+<summary>Full CLI Options</summary>
 
-**`-H, --head <COLOR>`**
-Color of the leading (first) character in each column.
-`[default: white]`
+```
+Efeito de chuva Matrix minimalista para o terminal
 
-**`-B, --bg <COLOR>`**
-Background color. When omitted the terminal's default background is used.
+Usage: koko-rain [OPTIONS]
 
-**`-s, --shade`**
-Enable tail fade. Each cell in the trail gradually blends from the body color toward the fade target.
+Options:
+  -c, --color <COLOR>
+          Set the body color of the rain trails.
+          Named colors: black, white, red, green, blue, yellow, cyan, magenta, orange, purple
+          Or an RGB tuple: "R,G,B" (e.g. "0,255,70")
 
-**`-G, --fade-to <COLOR>`**
-Target color for the tail fade. Only visible when `--shade` is enabled.
-`[default: black]`
+          [default: green]
 
-**`-S, --speed <MIN,MAX>`**
-Tick interval range in milliseconds. Each column picks a random speed within this range, so lower values produce faster rain.
-`[default: 40,180]`
+  -H, --head <HEAD>
+          Set the color of the leading (head) character in each column.
+          Accepts the same color formats as --color.
 
-**`--chars <STRING>`**
-Character pool used to generate the rain. Each tick picks a random character from this string.
-`[default: 01]`
+          [default: white]
 
-### Named colors
+  -B, --bg <BG>
+          Set the background color.
+          When omitted the terminal's default background is used.
+          Accepts the same color formats as --color.
 
-`black` `white` `red` `green` `blue` `yellow` `cyan` `magenta` `orange` `purple`
+  -s, --shade
+          Enable tail fade.
+          Each cell in the trail gradually blends from the body color toward the fade target (--fade-to).
 
-Any flag that accepts `<COLOR>` also takes an RGB tuple like `"0,255,70"`.
+  -G, --fade-to <FADE_TO>
+          Set the target color for the tail fade. Only visible when --shade is enabled.
+          Accepts the same color formats as --color.
+
+          [default: black]
+
+  -S, --speed <SPEED>
+          Set the tick interval range in milliseconds (format: "min,max").
+          Each column picks a random speed within this range.
+          Lower values = faster rain, higher values = slower rain.
+          Examples: "20,80" (fast), "40,180" (default), "120,300" (slow)
+
+          [default: 40,180]
+
+      --chars <CHARS>
+          Set a custom character pool for the rain.
+          Each tick picks a random character from this string.
+          Supports ASCII, Unicode, and emoji.
+          Conflicts with --group.
+
+          [default: 01]
+
+  -g, --group <GROUP>
+          Use a predefined character group instead of --chars.
+          Available groups:
+
+            all             Most groups combined
+            alphalow        Lowercase alphabet (a-z)
+            alphaup         Uppercase alphabet (A-Z)
+            arrow           Arrow symbols
+            bin             Binary digits (0, 1)
+            braille         Braille dot patterns
+            cards           Playing card suits
+            classic         Katakana + digits + symbols (cmatrix style)
+            clock           Clock face emojis
+            crab            🦀
+            dominosh        Horizontal domino tiles
+            dominosv        Vertical domino tiles
+            earth           🌍🌎🌏
+            emojis          Broad emoji set
+            jap / katakana  Half-width Japanese katakana
+            large-letters   Full-width Latin letters
+            moon            Moon phase emojis
+            num / digits    Digits (0-9)
+            numbered-balls  Circled numbers
+            numbered-cubes  Squared letters
+            plants          Plant and fruit emojis
+            shapes          Colored squares and circles
+            smile           Smiley face emojis
+
+  -h, --help
+          Print help (see a summary with '-h')
+
+  -V, --version
+          Print version
+```
+
+</details>
 
 ## Testing
 
