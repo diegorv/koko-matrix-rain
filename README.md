@@ -1,61 +1,141 @@
 # rain
 
-Minimal Matrix-style rain effect for the terminal. Built for macOS (iTerm2 / Ghostty), one binary, zero config.
+Matrix-style rain effect for the terminal. Single binary, zero runtime dependencies, built with Rust.
+
+Works on any terminal with true-color support (iTerm2, Ghostty, Kitty, Alacritty, WezTerm...).
+
+## Requirements
+
+- [Rust](https://www.rust-lang.org/tools/install) >= 1.70
+
+```sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+## Build
+
+Development build (fast compile, no optimizations):
+
+```sh
+cargo build
+```
+
+Release build (optimized binary with LTO and stripped symbols):
+
+```sh
+cargo build --release
+```
+
+The binary will be at `target/release/rain`.
 
 ## Install
+
+### Via cargo install (recommended)
 
 ```sh
 cargo install --path .
 ```
 
-Or build a release binary:
+This compiles in release mode and copies the binary to `~/.cargo/bin/rain`.
+
+### Add to zsh PATH
+
+If `~/.cargo/bin` is not already in your PATH, add it to `~/.zshrc`:
+
+```sh
+echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+Verify:
+
+```sh
+which rain    # should print ~/.cargo/bin/rain
+rain --version
+```
+
+### Manual install
+
+If you prefer placing the binary elsewhere:
 
 ```sh
 cargo build --release
-# binário em target/release/rain
+cp target/release/rain /usr/local/bin/
 ```
 
-## Uso
+## Usage
 
 ```sh
-rain                                          # verde padrão, 0/1 caindo
-rain -c "0,255,70" -H white -s                # shade ativado
-rain -c cyan -H white -B black -s             # fundo preto, ciano com fade
-rain --chars "ABCDEF0123456789"               # pool hexadecimal
-rain -S 20,80                                 # chuva rápida
-rain -c red --chars "01" -G "40,0,0"          # vermelho desbotando pra marrom
+rain                                          # default green, 0/1 falling
+rain -c "0,255,70" -H white -s               # shade enabled
+rain -c cyan -H white -B black -s            # black background, cyan with fade
+rain --chars "ABCDEF0123456789"              # hex character pool
+rain -S 20,80                                # fast rain
+rain -c red --chars "01" -G "40,0,0"         # red fading to dark brown
 ```
 
-Sair: `q`, `ESC` ou `Ctrl+C`.
+Quit: `q`, `ESC` or `Ctrl+C`.
 
 ## Flags
 
-| Flag | Padrão | Descrição |
+| Flag | Default | Description |
 |---|---|---|
-| `-c, --color` | `green` | Cor do corpo (nome ou `R,G,B`) |
-| `-H, --head` | `white` | Cor do primeiro char |
-| `-B, --bg` | — | Cor de fundo |
-| `-s, --shade` | off | Ativa o fade da cauda |
-| `-G, --fade-to` | `black` | Cor-alvo do fade |
-| `-S, --speed` | `40,180` | ms entre ticks por coluna (`min,max`) |
-| `--chars` | `01` | Pool de caracteres |
+| `-c, --color` | `green` | Body color (name or `R,G,B`) |
+| `-H, --head` | `white` | Head character color |
+| `-B, --bg` | -- | Background color |
+| `-s, --shade` | off | Enable tail fade |
+| `-G, --fade-to` | `black` | Fade target color |
+| `-S, --speed` | `40,180` | ms between ticks per column (`min,max`) |
+| `--chars` | `01` | Character pool |
 
-Cores nomeadas: `black white red green blue yellow cyan magenta orange purple`.
+Named colors: `black` `white` `red` `green` `blue` `yellow` `cyan` `magenta` `orange` `purple`.
 
-## Desenvolvimento
+## Testing
 
 ```sh
-cargo test                    # roda tudo, incluindo snapshots
-cargo insta review            # revisa mudanças de snapshot
-cargo run -- -c cyan -s       # testa visualmente
+cargo test                    # run all tests, including snapshots
+cargo insta review            # review snapshot changes
 ```
 
-Estrutura:
+## Distributing
 
-- `src/cli.rs` — args, parsing de cor e velocidade
-- `src/rain.rs` — simulação pura (sem I/O, totalmente testável com seed)
-- `src/main.rs` — setup do terminal + loop de desenho
+To produce a standalone binary that runs on any Mac without Rust installed:
 
-## Licença
+```sh
+cargo build --release
+```
+
+The release profile is already configured with LTO, strip, and codegen-units=1 -- the binary comes out small with no debug symbols.
+
+To distribute, just send the `target/release/rain` file. The recipient can place it anywhere on their PATH:
+
+```sh
+chmod +x rain
+mv rain /usr/local/bin/
+```
+
+### Cross-compilation (Apple Silicon + Intel)
+
+To build a universal binary that runs on both architectures:
+
+```sh
+rustup target add x86_64-apple-darwin
+cargo build --release --target aarch64-apple-darwin
+cargo build --release --target x86_64-apple-darwin
+lipo -create \
+  target/aarch64-apple-darwin/release/rain \
+  target/x86_64-apple-darwin/release/rain \
+  -output rain
+```
+
+## Project structure
+
+| File | Responsibility |
+|---|---|
+| `src/cli.rs` | Args, color and speed parsing |
+| `src/rain.rs` | Pure simulation (no I/O, fully testable with seed) |
+| `src/main.rs` | Terminal setup + render loop |
+
+## License
 
 MIT
