@@ -165,6 +165,10 @@ lipo -create \
 | `src/rain.rs` | Pure simulation (no I/O, fully testable with seed) |
 | `src/main.rs` | Terminal setup + render loop |
 
+## Inspiration
+
+This project was inspired by [rusty-rain](https://github.com/cowboy8625/rusty-rain). No code was copied — everything was written from scratch.
+
 ## License
 
 MIT
