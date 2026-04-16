@@ -1,6 +1,6 @@
 [package]
 name = "koko-matrix-rain"
-version = "0.0.2"
+version = "0.0.3"
 edition = "2021"
 description = "Minimal Matrix-style rain CLI for the terminal"
 license = "MIT"
