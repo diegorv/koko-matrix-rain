@@ -36,7 +36,7 @@ impl Rgb {
         let parts: Vec<&str> = s.split(',').collect();
         if parts.len() != 3 {
             return Err(format!(
-                "cor inválida: '{s}' (use um nome ou 'R,G,B')"
+                "invalid color: '{s}' (use a name or 'R,G,B')"
             ));
         }
         let r = parts[0].trim().parse::<u8>().map_err(|e| format!("R: {e}"))?;
@@ -61,7 +61,7 @@ impl Rgb {
 fn parse_speed(s: &str) -> Result<Range<u64>, String> {
     let parts: Vec<&str> = s.split(',').collect();
     if parts.len() != 2 {
-        return Err(format!("formato inválido: '{s}' (use min,max)"));
+        return Err(format!("invalid format: '{s}' (use min,max)"));
     }
     let min: u64 = parts[0]
         .trim()
@@ -72,14 +72,14 @@ fn parse_speed(s: &str) -> Result<Range<u64>, String> {
         .parse()
         .map_err(|e: std::num::ParseIntError| format!("max: {e}"))?;
     if min >= max {
-        return Err("min deve ser menor que max".into());
+        return Err("min must be less than max".into());
     }
     Ok(min..max)
 }
 
 fn parse_chars(s: &str) -> Result<String, String> {
     if s.is_empty() {
-        return Err("--chars não pode ser vazio".into());
+        return Err("--chars must not be empty".into());
     }
     Ok(s.to_string())
 }
@@ -130,8 +130,8 @@ fn parse_group(s: &str) -> Result<String, String> {
         "smile"     => chars_from_ranges(&[128_512..128_518]),
         _ => {
             return Err(format!(
-                "grupo desconhecido: '{s}'\n\
-                 disponíveis: all, alphalow, alphaup, arrow, bin, braille, cards, classic, \
+                "unknown group: '{s}'\n\
+                 available: all, alphalow, alphaup, arrow, bin, braille, cards, classic, \
                  clock, crab, dominosh, dominosv, earth, emojis, jap, large-letters, \
                  lettered-cubes, moon, num, numbered-balls, numbered-cubes, plants, shapes, smile"
             ));
@@ -143,11 +143,11 @@ fn parse_group(s: &str) -> Result<String, String> {
 #[derive(Parser, Debug, Clone)]
 #[command(
     name = "koko-rain",
-    about = "Efeito de chuva Matrix minimalista para o terminal",
+    about = "Minimal Matrix-style rain for the terminal",
     version
 )]
 pub struct Cli {
-    /// Cor do corpo (nome ou "R,G,B")
+    /// Body color (name or "R,G,B")
     #[arg(short = 'c', long, default_value = "green", value_parser = Rgb::parse,
         long_help = "Set the body color of the rain trails.\n\
             Named colors: black, white, red, green, blue, yellow, cyan, magenta, orange, purple\n\
@@ -155,14 +155,14 @@ pub struct Cli {
     )]
     pub color: Rgb,
 
-    /// Cor da cabeça (primeiro caractere da coluna)
+    /// Head color (leading character in each column)
     #[arg(short = 'H', long, default_value = "white", value_parser = Rgb::parse,
         long_help = "Set the color of the leading (head) character in each column.\n\
             Accepts the same color formats as --color."
     )]
     pub head: Rgb,
 
-    /// Cor de fundo (opcional)
+    /// Background color (optional)
     #[arg(short = 'B', long, value_parser = Rgb::parse,
         long_help = "Set the background color.\n\
             When omitted the terminal's default background is used.\n\
@@ -170,21 +170,21 @@ pub struct Cli {
     )]
     pub bg: Option<Rgb>,
 
-    /// Ativa o fade da cauda
+    /// Enable tail fade
     #[arg(short = 's', long,
         long_help = "Enable tail fade.\n\
             Each cell in the trail gradually blends from the body color toward the fade target (--fade-to)."
     )]
     pub shade: bool,
 
-    /// Cor-alvo do fade (pra onde a cauda desbota)
+    /// Fade target color (where the tail fades to)
     #[arg(short = 'G', long, default_value = "black", value_parser = Rgb::parse,
         long_help = "Set the target color for the tail fade. Only visible when --shade is enabled.\n\
             Accepts the same color formats as --color."
     )]
     pub fade_to: Rgb,
 
-    /// Velocidade em ms, formato "min,max"
+    /// Speed range in ms, format "min,max"
     #[arg(short = 'S', long, default_value = "40,180", value_parser = parse_speed,
         long_help = "Set the tick interval range in milliseconds (format: \"min,max\").\n\
             Each column picks a random speed within this range.\n\
@@ -193,7 +193,7 @@ pub struct Cli {
     )]
     pub speed: Range<u64>,
 
-    /// Pool de caracteres a usar na chuva
+    /// Character pool for the rain
     #[arg(long, default_value = "01", value_parser = parse_chars,
         long_help = "Set a custom character pool for the rain.\n\
             Each tick picks a random character from this string.\n\
@@ -202,7 +202,7 @@ pub struct Cli {
     )]
     pub chars: String,
 
-    /// Grupo predefinido de caracteres (ex: jap, emojis, cards)
+    /// Predefined character group (e.g. jap, emojis, cards)
     #[arg(short = 'g', long, value_parser = parse_group, conflicts_with = "chars",
         long_help = "Use a predefined character group instead of --chars.\n\
             Available groups:\n\
@@ -310,8 +310,8 @@ mod tests {
     #[test]
     fn group_rejects_unknown() {
         let err = parse_group("nope").unwrap_err();
-        assert!(err.contains("grupo desconhecido"));
-        assert!(err.contains("disponíveis"));
+        assert!(err.contains("unknown group"));
+        assert!(err.contains("available"));
     }
 
     #[test]

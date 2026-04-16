@@ -126,7 +126,7 @@ fn run(cli: Cli) -> std::io::Result<()> {
 fn main() {
     let cli = Cli::parse();
     if let Err(e) = run(cli) {
-        eprintln!("erro: {e}");
+        eprintln!("error: {e}");
         std::process::exit(1);
     }
 }

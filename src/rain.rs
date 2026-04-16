@@ -300,8 +300,8 @@ mod tests {
                 }
             }
         }
-        assert!(saw_head, "esperava ver ao menos uma cabeça");
-        assert!(saw_body, "esperava ver ao menos um corpo");
+        assert!(saw_head, "expected to see at least one head");
+        assert!(saw_body, "expected to see at least one body");
     }
 
     #[test]

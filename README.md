@@ -163,7 +163,7 @@ Quit: `q`, `ESC` or `Ctrl+C`.
 <summary>Full CLI Options</summary>
 
 ```
-Efeito de chuva Matrix minimalista para o terminal
+Minimal Matrix-style rain for the terminal
 
 Usage: koko-rain [OPTIONS]
 
