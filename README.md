@@ -1,10 +1,14 @@
 # koko-matrix-rain
 
+[![CI](https://github.com/diegorv/koko-matrix-rain/actions/workflows/ci.yml/badge.svg)](https://github.com/diegorv/koko-matrix-rain/actions/workflows/ci.yml)
+[![Release](https://github.com/diegorv/koko-matrix-rain/actions/workflows/release.yml/badge.svg)](https://github.com/diegorv/koko-matrix-rain/actions/workflows/release.yml)
+[![crates.io](https://img.shields.io/crates/v/koko-matrix-rain)](https://crates.io/crates/koko-matrix-rain)
+
 A minimal Matrix-style rain CLI for the terminal. Single binary, zero runtime dependencies, built with Rust.
 
 100% AI-generated — code, tests, and docs were written entirely with [Claude Code](https://claude.ai/claude-code).
 
-Built and tested on macOS only. It may work on Linux, but Windows/Linux support is not a goal.
+Built and tested on macOS. CI builds and tests pass on Linux, but it hasn't been manually tested there.
 
 Works on any terminal with true-color support (iTerm2, Ghostty, Kitty, Alacritty, WezTerm...).
 
