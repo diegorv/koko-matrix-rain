@@ -109,18 +109,6 @@ koko-rain --chars "🔥💀👾🤖💎⚡" -c yellow             # emoji rain
 
 Run `koko-rain --help` for the full list of flags (`--color`, `--head`, `--bg`, `--shade`, `--fade-to`, `--speed`).
 
-## Cross-compilation (Apple Silicon + Intel)
-
-```sh
-rustup target add x86_64-apple-darwin
-cargo build --release --target aarch64-apple-darwin
-cargo build --release --target x86_64-apple-darwin
-lipo -create \
-  target/aarch64-apple-darwin/release/koko-rain \
-  target/x86_64-apple-darwin/release/koko-rain \
-  -output koko-rain
-```
-
 ## Testing
 
 ```sh
