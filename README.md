@@ -16,13 +16,17 @@ Works on any terminal with true-color support (iTerm2, Ghostty, Kitty, Alacritty
 
 ## Install
 
+From [crates.io](https://crates.io/crates/koko-matrix-rain):
+
 ```sh
-cargo install --path .
+cargo install koko-matrix-rain
 ```
 
-Or build manually:
+Or from source:
 
 ```sh
+cargo install --path .
+# or
 cargo build --release
 # binary at target/release/koko-matrix-rain
 ```
