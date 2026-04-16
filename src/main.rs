@@ -57,8 +57,7 @@ fn draw(rain: &Rain, term: &mut Term, bg: Option<Rgb>, char_width: usize) -> std
         if let Some(bg) = bg {
             queue!(out, SetBackgroundColor(to_color(bg)))?;
         }
-        for (col, cell) in row.iter().enumerate() {
-            queue!(out, cursor::MoveTo((col * char_width) as u16, y as u16))?;
+        for cell in row.iter() {
             match cell {
                 Some(c) => {
                     queue!(out, SetForegroundColor(to_color(c.color)), Print(c.ch))?;
