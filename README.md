@@ -131,9 +131,16 @@ cargo insta review            # review snapshot changes
 | `src/rain.rs` | Pure simulation (no I/O, fully testable with seed) |
 | `src/main.rs` | Terminal setup + render loop |
 
-## Inspiration
+## Inspiration & Attribution
 
 This project was inspired by [rusty-rain](https://github.com/cowboy8625/rusty-rain). No code was copied — everything was written from scratch.
+
+The character groups (`-g`) use Unicode ranges sourced from:
+
+| What | Source | License |
+|---|---|---|
+| Unicode ranges for all groups (katakana, emoji, cards, etc.) | [ezemoji](https://github.com/cowboy8625/ezemoji) crate by cowboy8625 | MIT |
+| "classic" group composition (katakana + digits + symbols) | Inspired by rusty-rain's cmatrix-style group | Apache-2.0 |
 
 ## License
 
