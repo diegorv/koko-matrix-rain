@@ -1,9 +1,9 @@
 # koko-matrix-rain
 
-[![CI](https://github.com/diegorv/koko-matrix-rain/actions/workflows/ci.yml/badge.svg)](https://github.com/diegorv/koko-matrix-rain/actions/workflows/ci.yml)
-[![Release](https://github.com/diegorv/koko-matrix-rain/actions/workflows/release.yml/badge.svg)](https://github.com/diegorv/koko-matrix-rain/actions/workflows/release.yml)
+[![CI](https://github.com/diegorv/koko.matrix-rain-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/diegorv/koko.matrix-rain-cli/actions/workflows/ci.yml)
+[![Release](https://github.com/diegorv/koko.matrix-rain-cli/actions/workflows/release.yml/badge.svg)](https://github.com/diegorv/koko.matrix-rain-cli/actions/workflows/release.yml)
 [![crates.io](https://img.shields.io/crates/v/koko-matrix-rain)](https://crates.io/crates/koko-matrix-rain)
-[![dependency status](https://deps.rs/repo/github/diegorv/koko-matrix-rain/status.svg)](https://deps.rs/repo/github/diegorv/koko-matrix-rain)
+[![dependency status](https://deps.rs/repo/github/diegorv/koko.matrix-rain-cli/status.svg)](https://deps.rs/repo/github/diegorv/koko.matrix-rain-cli)
 [![unsafe forbidden](https://img.shields.io/badge/unsafe-forbidden-success.svg)](https://github.com/rust-secure-code/safety-dance/)
 
 A minimal Matrix-style rain CLI for the terminal. Single binary, zero runtime dependencies, built with Rust.
@@ -13,6 +13,12 @@ A minimal Matrix-style rain CLI for the terminal. Single binary, zero runtime de
 Built and tested on macOS. CI builds and tests pass on Linux, but it hasn't been manually tested there.
 
 Works on any terminal with true-color support (iTerm2, Ghostty, Kitty, Alacritty, WezTerm...).
+
+## Goals
+
+- **Small and simple.** Three Rust source files: args parsing, pure simulation (no I/O, fully testable with a seed), and the terminal render loop.
+- **Zero runtime dependencies.** A single self-contained binary. Four build-time crates (`clap`, `crossterm`, `rand`, `unicode-width`) — nothing dynamic pulled in at runtime.
+- **100% local and private.** No network I/O, no telemetry, no analytics, no tracking. The CLI only reads your terminal size and keystrokes, and writes ANSI to stdout. Nothing ever leaves your machine.
 
 ## Install
 
