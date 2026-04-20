@@ -1,6 +1,7 @@
 #![forbid(unsafe_code)]
 
 mod cli;
+mod pipes;
 mod rain;
 
 use clap::Parser;
@@ -10,7 +11,8 @@ use crossterm::{
     style::{Color, Print, SetBackgroundColor, SetForegroundColor},
     terminal::{self, Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use rain::{Rain, RainConfig};
+use pipes::{CellUpdate, Pipes, PipesConfig};
+use rain::{Rain, RainConfig, RenderCell};
 use std::{
     io::{stdout, BufWriter, Stdout, Write},
     time::{Duration, Instant},
@@ -50,9 +52,13 @@ impl Drop for Term {
     }
 }
 
-fn draw(rain: &Rain, term: &mut Term, bg: Option<Rgb>, char_width: usize) -> std::io::Result<()> {
+fn draw_grid(
+    grid: &[Vec<Option<RenderCell>>],
+    term: &mut Term,
+    bg: Option<Rgb>,
+    char_width: usize,
+) -> std::io::Result<()> {
     let out = &mut term.out;
-    let grid = rain.render();
     let blank = " ".repeat(char_width);
     for (y, row) in grid.iter().enumerate() {
         queue!(out, cursor::MoveTo(0, y as u16))?;
@@ -61,13 +67,28 @@ fn draw(rain: &Rain, term: &mut Term, bg: Option<Rgb>, char_width: usize) -> std
         }
         for cell in row.iter() {
             match cell {
-                Some(c) => {
-                    queue!(out, SetForegroundColor(to_color(c.color)), Print(c.ch))?;
-                }
-                None => {
-                    queue!(out, Print(&blank))?;
-                }
+                Some(c) => queue!(out, SetForegroundColor(to_color(c.color)), Print(c.ch))?,
+                None    => queue!(out, Print(&blank))?,
             }
+        }
+    }
+    out.flush()
+}
+
+fn draw_rain(rain: &Rain, term: &mut Term, bg: Option<Rgb>, char_width: usize) -> std::io::Result<()> {
+    draw_grid(&rain.render(), term, bg, char_width)
+}
+
+fn draw_pipe_delta(updates: &[CellUpdate], term: &mut Term, bg: Option<Rgb>) -> std::io::Result<()> {
+    let out = &mut term.out;
+    for &(x, y, cell) in updates {
+        queue!(out, cursor::MoveTo(x, y))?;
+        if let Some(bg) = bg {
+            queue!(out, SetBackgroundColor(to_color(bg)))?;
+        }
+        match cell {
+            Some(c) => queue!(out, SetForegroundColor(to_color(c.color)), Print(c.ch))?,
+            None    => queue!(out, Print(" "))?,
         }
     }
     out.flush()
@@ -87,9 +108,9 @@ fn is_exit(k: &event::KeyEvent) -> bool {
     )
 }
 
-fn run(cli: Cli) -> std::io::Result<()> {
+fn run_rain(cli: &Cli) -> std::io::Result<()> {
     let (w, h) = terminal::size()?;
-    let chars: Vec<char> = cli.group.unwrap_or(cli.chars).chars().collect();
+    let chars: Vec<char> = cli.group.clone().unwrap_or_else(|| cli.chars.clone()).chars().collect();
     let char_width = chars.first().and_then(|c| c.width()).unwrap_or(1).max(1);
     let cfg = RainConfig {
         body: cli.color,
@@ -119,10 +140,51 @@ fn run(cli: Cli) -> std::io::Result<()> {
             }
         }
         if rain.tick(Instant::now()) {
-            draw(&rain, &mut term, cli.bg, cfg.char_width)?;
+            draw_rain(&rain, &mut term, cli.bg, cfg.char_width)?;
         }
     }
     Ok(())
+}
+
+fn run_pipes(cli: &Cli) -> std::io::Result<()> {
+    let (w, h) = terminal::size()?;
+    // Use the speed range minimum as the per-tick interval.
+    let tick_ms = cli.speed.start;
+    let cfg = PipesConfig { tick_ms, num_pipes: cli.num_pipes, color: cli.color, head: cli.head };
+    let mut pipes = Pipes::new(w, h, cfg);
+    let mut term = Term::new()?;
+
+    if let Some(bg) = cli.bg {
+        execute!(term.out, SetBackgroundColor(to_color(bg)), Clear(ClearType::All))?;
+    }
+
+    loop {
+        if event::poll(POLL_INTERVAL)? {
+            match event::read()? {
+                event::Event::Key(k) if is_exit(&k) => break,
+                event::Event::Resize(nw, nh) => {
+                    pipes.resize(nw, nh);
+                    execute!(term.out, Clear(ClearType::All))?;
+                    draw_grid(pipes.grid(), &mut term, cli.bg, 1)?;
+                }
+                _ => {}
+            }
+        }
+
+        let updates = pipes.tick(Instant::now());
+        if !updates.is_empty() {
+            draw_pipe_delta(&updates, &mut term, cli.bg)?;
+        }
+    }
+    Ok(())
+}
+
+fn run(cli: Cli) -> std::io::Result<()> {
+    if cli.pipes {
+        run_pipes(&cli)
+    } else {
+        run_rain(&cli)
+    }
 }
 
 fn main() {

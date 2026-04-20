@@ -158,7 +158,7 @@ fn parse_group(s: &str) -> Result<String, String> {
 pub struct Cli {
     /// Body color (name or "R,G,B")
     #[arg(short = 'c', long, default_value = "green", value_parser = Rgb::parse,
-        long_help = "Set the body color of the rain trails.\n\
+        long_help = "Set the body color of the rain trails or pipes.\n\
             Named colors: black, white, red, green, blue, yellow, cyan, magenta, orange, purple\n\
             Or an RGB tuple: \"R,G,B\" (e.g. \"0,255,70\")"
     )]
@@ -241,6 +241,23 @@ pub struct Cli {
             \n  smile           Smiley face emojis"
     )]
     pub group: Option<String>,
+
+    /// Run pipes screensaver instead of matrix rain
+    #[arg(short = 'p', long,
+        long_help = "Run the pipes screensaver mode.\n\
+            Draws animated box-drawing pipes that grow and turn randomly.\n\
+            The screen resets automatically when it fills up.\n\
+            --color sets a single color for all pipes (default: vibrant palette).\n\
+            --speed controls pipe tick rate (uses the range minimum, e.g. \"50,50\").\n\
+            --num-pipes sets the number of simultaneous pipes."
+    )]
+    pub pipes: bool,
+
+    /// Number of simultaneous pipes (pipes mode only)
+    #[arg(short = 'n', long, default_value = "20",
+        long_help = "Number of simultaneous pipes to draw. Only used with --pipes."
+    )]
+    pub num_pipes: usize,
 }
 
 #[cfg(test)]

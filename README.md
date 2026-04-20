@@ -16,7 +16,7 @@ Works on any terminal with true-color support (iTerm2, Ghostty, Kitty, Alacritty
 
 ## Goals
 
-- **Small and simple.** Three Rust source files: args parsing, pure simulation (no I/O, fully testable with a seed), and the terminal render loop.
+- **Small and simple.** Four Rust source files: args parsing, rain simulation, pipes simulation, and the terminal render loop.
 - **Zero runtime dependencies.** A single self-contained binary. Four build-time crates (`clap`, `crossterm`, `rand`, `unicode-width`) — nothing dynamic pulled in at runtime.
 - **100% local and private.** No network I/O, no telemetry, no analytics, no tracking. The CLI only reads your terminal size and keystrokes, and writes ANSI to stdout. Nothing ever leaves your machine.
 
@@ -101,6 +101,19 @@ koko-matrix-rain --chars "∑∏∫∂√∞≈≠≤≥" -c cyan -s          # 
 koko-matrix-rain --chars "🔥💀👾🤖💎⚡" -c yellow             # emoji rain
 ```
 
+## Bonus: pipes mode
+
+```sh
+koko-matrix-rain --pipes               # 20 pipes, matrix colors
+koko-matrix-rain --pipes -n 40         # more pipes
+koko-matrix-rain --pipes -S 30,30      # faster
+koko-matrix-rain --pipes -c cyan       # cyan pipes
+koko-matrix-rain --pipes -c cyan -H white -B black   # full color control
+```
+
+Draws double-line box-drawing pipes (`═ ║ ╔ ╗ ╚ ╝`) that grow and turn randomly, pipes.sh-style.  
+Each pipe has a white→green gradient at its head; the trail fades naturally to black over time.
+
 ## Colors
 
 ```sh
@@ -155,14 +168,16 @@ Run `koko-matrix-rain --help` for full details.
 
 | Flag | Description | Default |
 |---|---|---|
-| `-c, --color` | Body color (name or `R,G,B`) | `green` |
+| `-c, --color` | Body color | `green` |
 | `-H, --head` | Head character color | `white` |
 | `-B, --bg` | Background color | terminal default |
-| `-s, --shade` | Enable tail fade | off |
-| `-G, --fade-to` | Fade target color | `black` |
-| `-S, --speed` | Tick range in ms (`min,max`) | `40,180` |
-| `-g, --group` | Predefined character group | — |
-| `--chars` | Custom character pool | `01` |
+| `-s, --shade` | Enable tail fade (rain only) | off |
+| `-G, --fade-to` | Fade target color (rain only) | `black` |
+| `-S, --speed` | Tick range in ms (`min,max`) — pipes uses range minimum | `40,180` |
+| `-g, --group` | Predefined character group (rain only) | — |
+| `--chars` | Custom character pool (rain only) | `01` |
+| `-p, --pipes` | Pipes screensaver mode | off |
+| `-n, --num-pipes` | Number of simultaneous pipes | `20` |
 
 ## Development
 
@@ -178,7 +193,8 @@ cargo insta review            # review snapshot changes
 | File | Responsibility |
 |---|---|
 | `src/cli.rs` | Args, color and speed parsing |
-| `src/rain.rs` | Pure simulation (no I/O, fully testable with seed) |
+| `src/rain.rs` | Rain simulation (no I/O, fully testable with seed) |
+| `src/pipes.rs` | Pipes simulation (no I/O) |
 | `src/main.rs` | Terminal setup + render loop |
 
 ## Inspiration & Attribution
